@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 void main() {
@@ -7,80 +5,65 @@ void main() {
 }
 
 class MainApp extends StatefulWidget {
-  MainApp({super.key});
+  const MainApp({super.key});
 
   @override
   State<MainApp> createState() => _MainAppState();
 }
 
 class _MainAppState extends State<MainApp> {
-  int counter = 4;
-
-  List<Widget> rainbowTexts(String data) {
-    final List<Color> colors = [
-      Colors.red,
-      Colors.orange,
-      Colors.yellow,
-      Colors.green,
-      Colors.blue,
-      Colors.purple,
-      Colors.pink,
-    ];
-
-    List<Widget> textList = [];
-
-    data.split('').forEach((char) {
-      textList.add(
-        Text(
-          char,
-          style: TextStyle(color: colors[(counter % 7)]),
-        ),
-      );
-      counter++;
-    });
-
-    return textList;
-  }
+  List<Tarefa> listaAfazeres = [
+    Tarefa(
+        nome: "Terefa 1", descricao: "Descricao da tarefa 1", concluido: false)
+  ];
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('executou o método build');
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.indigoAccent,
+          backgroundColor: Colors.blue,
+          title: Text("Lista de afazeres"),
         ),
-        body: Container(
-          color: Colors.black87,
-          child: Center(
-            child: Column(
-              spacing: 16,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: rainbowTexts('Hello World!'),
-                ),
-                TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(Colors.indigoAccent)),
-                  onPressed: () {
-                  setState(() {
-                      final random = Random();
-                    counter = random.nextInt(999);
-                  });
+        body: Column(
+          children: [
+            ListView.builder(
+              itemCount: listaAfazeres.length,
+              itemBuilder: (context, index) {
+                return CheckboxListTile(
+                  onChanged: (newValue) {
+                    if (newValue == null) {
+                      listaAfazeres[index].concluido = false;
+                      return;
+                    }
+                    setState(() {
+                      listaAfazeres[index].concluido = newValue;
+                    });
                   },
-                  child: Text(
-                    "Clique em min!",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                  value: listaAfazeres[index].concluido,
+                  title: Text(listaAfazeres[index].nome),
+                  subtitle: Text(listaAfazeres[index].descricao),
+                );
+              },
+            ),
+            Row(
+              children: [
+                TextField(),
+                IconButton(onPressed: (){}, icon: Icon(Icons.send)),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
   }
+}
+
+class Tarefa {
+  String nome;
+  String descricao;
+  bool concluido;
+
+  Tarefa(
+      {required this.nome, required this.descricao, required this.concluido});
 }
